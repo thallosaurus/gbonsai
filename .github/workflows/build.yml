@@ -37,5 +37,5 @@ jobs:
         #uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
         uses: actions/deploy-pages@v4
         with:
-          artifact-name: wasm-pages
+          artifact_name: wasm-pages
 
