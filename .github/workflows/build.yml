@@ -14,8 +14,8 @@ jobs:
       - uses: acifani/setup-tinygo@v2
         with:
           tinygo-version: '0.32.0'
-      - name: Install dependencies
-        run: go get .
+#      - name: Install dependencies
+#        run: go get .
 #      - name: Build Cli
 #        run: make gbonsai_cli
       - name: Build WASM

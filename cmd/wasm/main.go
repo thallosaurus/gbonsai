@@ -4,8 +4,9 @@ package main
 
 import (
 	"fmt"
-	gbonsai "gbonsai/pkg"
 	"syscall/js"
+
+	"github.com/thallosaurus/gbonsai/pkg/gbonsai"
 )
 
 func main() {}

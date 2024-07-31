@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	gbonsai "gbonsai/pkg"
+
+	"github.com/thallosaurus/gbonsai/pkg/gbonsai"
 )
 
 func main() {
