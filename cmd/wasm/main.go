@@ -11,11 +11,13 @@ import (
 
 func main() {}
 
-//export call_me_from_js
+//export gbonsai_dom
 func write_to_document(seed int64) {
 	fmt.Println("Called go code from js")
 
-	bonsai, pot := gbonsai.Run(1)
+	conf := gbonsai.NewConfig(100, 50, 1)
+	//bonsai, _ := gbonsai.Run(conf)
+	bonsai, pot := gbonsai.Run(conf)
 
 	js.Global().Get("document").Call("getElementById", "tree").Set("innerText", bonsai)
 	js.Global().Get("document").Call("getElementById", "pot").Set("innerText", pot)

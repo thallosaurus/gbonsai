@@ -5,22 +5,10 @@ import (
 	"slices"
 )
 
-func Run(seed int64) (string, string) {
+func Run(conf Config) (string, string) {
 	//TODO improve precision
-	r := rand.New(rand.NewSource(int64(seed)))
 
-	conf := Config{
-		live:       0,
-		infinite:   0,
-		lifeStart:  100,
-		seed:       int64(seed),
-		max_x:      200,
-		max_y:      200,
-		leaves:     make([]string, 64),
-		leavesSize: 1,
-		multiplier: 5,
-		rng:        r,
-	}
+	//conf := NewConfig()
 
 	counters := Counters{}
 
@@ -282,6 +270,21 @@ type Config struct {
 	leaves     []string
 	leavesSize int
 	rng        *rand.Rand
+}
+
+func NewConfig(w, h int, seed int64) Config {
+	return Config{
+		live:       0,
+		infinite:   0,
+		lifeStart:  100,
+		seed:       int64(seed),
+		max_x:      w,
+		max_y:      h,
+		leaves:     make([]string, 64),
+		leavesSize: 1,
+		multiplier: 5,
+		rng:        rand.New(rand.NewSource(int64(seed))),
+	}
 }
 
 type Counters struct {

@@ -27,26 +27,14 @@ const wasmBrowserInstantiate = async (wasmModuleUrl, importObject) => {
 };
 
 const initWasm = async () => {
-  // Get the importObject from the go instance.
   const importObject = go.importObject;
-
-  // Instantiate our wasm module
   const wasmModule = await wasmBrowserInstantiate("gbonsai.wasm", importObject);
-
-  // Allow the wasm_exec go instance, bootstrap and execute our wasm module
   go.run(wasmModule.instance);
-
-  // Call the Add function export from wasm, save the result
-  console.log(wasmModule)
-  //const result = wasmModule.instance.exports.call_me_from_js();
-
   return wasmModule
-  //console.log(wasmModule.instance.exports.ADD_CONSTANT); // Should return undefined
-  //console.log(wasmModule.instance.exports.addIntegerWithConstant); // Should return undefined
 };
 
 window.onload = (e) => {
   initWasm().then(mod => {
-    mod.instance.exports.call_me_from_js(BigInt(Date.now()))
+    mod.instance.exports.gbonsai_dom(BigInt(Date.now()))
   })
 }
