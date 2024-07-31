@@ -123,10 +123,22 @@ func chooseString(conf *Config, t BranchType, life int, dx int, dy int) string {
 		} else if dx > 0 {
 			branchStr = "/"
 		}
+	case ShootRight:
+		if dy > 0 {
+			branchStr = "/"
+		} else if dy == 0 {
+			branchStr = "_/"
+		} else if dx < 0 {
+			branchStr = "\\|"
+		} else if dx == 0 {
+			branchStr = "/|"
+		} else if dx > 0 {
+			branchStr = "/"
+		}
 	case Dying:
 		fallthrough
 	case Dead:
-		branchStr = conf.leaves[conf.rng.Int()%conf.leavesSize]
+		branchStr = "&" //conf.leaves[conf.rng.Int()%len(conf.leaves)]
 	}
 
 	return branchStr
@@ -268,20 +280,20 @@ type Config struct {
 	max_x      int
 	max_y      int
 	leaves     []string
-	leavesSize int
-	rng        *rand.Rand
+
+	rng *rand.Rand
 }
 
 func NewConfig(w, h int, seed int64, life int) Config {
 	return Config{
-		live:       0,
-		infinite:   0,
-		lifeStart:  life,
-		seed:       int64(seed),
-		max_x:      w,
-		max_y:      h,
-		leaves:     make([]string, 64),
-		leavesSize: 1,
+		live:      0,
+		infinite:  0,
+		lifeStart: life,
+		seed:      int64(seed),
+		max_x:     w,
+		max_y:     h,
+		leaves:    make([]string, 64),
+
 		multiplier: 5,
 		rng:        rand.New(rand.NewSource(int64(seed))),
 	}

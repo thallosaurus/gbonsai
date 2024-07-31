@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	conf := gbonsai.NewConfig(100, 50, 1, 50)
+	conf := gbonsai.NewConfig(100, 100, 1, 10)
 	bonsai, _ := gbonsai.Run(conf)
 	fmt.Print(bonsai)
 }

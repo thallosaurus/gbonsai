@@ -2,3 +2,4 @@ build/
 cbonsai/
 *.wasm
 *.wat
+gbonsai

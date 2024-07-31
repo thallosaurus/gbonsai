@@ -8,12 +8,18 @@ import (
 
 type StrBuf = map[int][]byte
 
+type BufAttr = map[int]BufAttrEntry
+type BufAttrEntry = struct {
+	color int
+}
+
 type TwoDimStringBuf struct {
 	width  int
 	height int
 	vec    StrBuf
+	attrs  BufAttr
 
-	buf_index int
+	last_color int
 }
 
 func NewTwoDimStringBuf(w, h int) TwoDimStringBuf {
@@ -28,10 +34,20 @@ func NewTwoDimStringBuf(w, h int) TwoDimStringBuf {
 		vc[i] = s_buf
 	}
 
+	// initialize attributes
+	attrs := make(BufAttr, w*h)
+	for i := range h * w {
+		attrs[i] = BufAttrEntry{
+			color: 0,
+		}
+	}
+
 	return TwoDimStringBuf{
-		width:  w,
-		height: h,
-		vec:    vc,
+		width:      w,
+		height:     h,
+		vec:        vc,
+		attrs:      attrs,
+		last_color: 0,
 	}
 }
 
@@ -63,6 +79,9 @@ func (t TwoDimStringBuf) Mvwprintw(x, y int, s string) {
 		for i, v := range st {
 			if x+i < len(t.vec[y]) && x+i > 0 {
 				t.vec[y][x+i] = v
+				t.attrs[xy_to_index(t.width, x, y)] = BufAttrEntry{
+					color: t.last_color,
+				}
 			}
 		}
 	}
