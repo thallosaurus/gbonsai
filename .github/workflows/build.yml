@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3.0.1
         with:
           name: wasm-pages
-          path: ./build
+          path: build
       - name: Deploy to GitHub Pages
         id: deployment
         #uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
