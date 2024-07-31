@@ -47,6 +47,6 @@ const initWasm = async () => {
 
 window.onload = (e) => {
   initWasm().then(mod => {
-    mod.instance.exports.call_me_from_js()
+    mod.instance.exports.call_me_from_js(BigInt(Date.now()))
   })
 }

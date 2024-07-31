@@ -5,3 +5,6 @@ gbonsai_out:
 	cp cmd/wasm/wasm_exec.js build/wasm_exec.js
 	cp cmd/wasm/glue.js build/glue.js
 	cp cmd/wasm/index.html build/index.html
+
+gbonsai_cli:
+	go build -o gbonsai cmd/cli/main.go

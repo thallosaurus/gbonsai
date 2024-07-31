@@ -17,12 +17,10 @@ type TwoDimStringBuf struct {
 }
 
 func NewTwoDimStringBuf(w, h int) TwoDimStringBuf {
-	//	var y_buf [][]byte
-	//	y_buf = make([][]byte, h)
-
+	// Allocate memory for the row buffers
 	vc := make(StrBuf, h)
+	// Initialize children for each row
 	for i := range h {
-		// Initialize children
 		s_buf := make([]byte, w)
 		for j := range s_buf {
 			s_buf[j] = []byte(" ")[0]

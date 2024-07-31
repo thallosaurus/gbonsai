@@ -5,19 +5,22 @@ import (
 	"slices"
 )
 
-func Run(seed int64) string {
+func Run(seed int64) (string, string) {
+	//TODO improve precision
+	r := rand.New(rand.NewSource(int64(seed)))
+
 	conf := Config{
 		live:       0,
 		infinite:   0,
 		lifeStart:  100,
-		seed:       seed,
+		seed:       int64(seed),
 		max_x:      200,
 		max_y:      200,
 		leaves:     make([]string, 64),
 		leavesSize: 1,
 		multiplier: 5,
+		rng:        r,
 	}
-	rand.New(rand.NewSource(conf.seed))
 
 	counters := Counters{}
 
@@ -31,9 +34,7 @@ func Run(seed int64) string {
 	//for {
 	growTree(&conf, &obj, &counters)
 
-	s := obj.treeBuf.String()
-
-	return s
+	return obj.treeBuf.String(), obj.baseBuf.String()
 	//}
 }
 
@@ -47,7 +48,7 @@ func drawBase(buf TwoDimStringBuf, baseType int) {
 func growTree(conf *Config, objects *NCObjects, counters *Counters) {
 	counters.shoots = 0
 	counters.branches = 0
-	counters.shootCounter = rand.Int()
+	counters.shootCounter = conf.rng.Int()
 
 	branch(conf, objects, counters, conf.max_x/2, conf.max_y-1, Trunk, conf.lifeStart)
 }
@@ -76,10 +77,10 @@ func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, 
 			branch(conf, objects, counters, x, y, Dying, life)
 		} else if (t == ShootLeft || t == ShootRight) && life < (conf.multiplier+2) {
 			branch(conf, objects, counters, x, y, Dying, life)
-		} else if t == Trunk && (((rand.Int() % 3) == 0) || life%conf.multiplier == 0) {
-			if rand.Int()%8 == 0 && life > 7 {
+		} else if t == Trunk && (((conf.rng.Int() % 3) == 0) || life%conf.multiplier == 0) {
+			if conf.rng.Int()%8 == 0 && life > 7 {
 				shootCooldown = conf.multiplier * 2
-				branch(conf, objects, counters, x, y, Trunk, life+rand.Int()%5-2)
+				branch(conf, objects, counters, x, y, Trunk, life+conf.rng.Int()%5-2)
 			} else if shootCooldown <= 0 {
 				shootCooldown = conf.multiplier * 2
 				shootLife := life + conf.multiplier
@@ -137,7 +138,7 @@ func chooseString(conf *Config, t BranchType, life int, dx int, dy int) string {
 	case Dying:
 		fallthrough
 	case Dead:
-		branchStr = conf.leaves[rand.Int()%conf.leavesSize]
+		branchStr = conf.leaves[conf.rng.Int()%conf.leavesSize]
 	}
 
 	return branchStr
@@ -153,7 +154,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 
 		if age <= 2 || life < 4 {
 			dy = 0
-			dx = (rand.Int() % 3) - 1
+			dx = (conf.rng.Int() % 3) - 1
 		} else if age < (multiplier * 3) {
 			if age%(multiplier/2) == 0 {
 				dy = -1
@@ -161,7 +162,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 				dy = 0
 			}
 
-			roll(&dice, 10)
+			roll(conf.rng, &dice, 10)
 			if dice >= 0 && dice <= 0 {
 				dx = -2
 			} else if dice >= 1 && dice <= 3 {
@@ -174,17 +175,17 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 				dx = 2
 			}
 		} else {
-			roll(&dice, 10)
+			roll(conf.rng, &dice, 10)
 			if dice > 2 {
 				dy = -1
 			} else {
 				dy = 0
 			}
-			dx = rand.Int()%3 - 1
+			dx = conf.rng.Int()%3 - 1
 		}
 
 	case ShootLeft:
-		roll(&dice, 10)
+		roll(conf.rng, &dice, 10)
 		if dice >= 0 && dice <= 1 {
 			dy = -1
 		} else if dice >= 2 && dice <= 7 {
@@ -193,7 +194,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 			dy = 1
 		}
 
-		roll(&dice, 10)
+		roll(conf.rng, &dice, 10)
 		if dice >= 0 && dice <= 1 {
 			dx = -2
 		} else if dice >= 2 && dice <= 5 {
@@ -204,7 +205,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 			dx = 1
 		}
 	case ShootRight:
-		roll(&dice, 10)
+		roll(conf.rng, &dice, 10)
 		if dice >= 0 && dice <= 1 {
 			dy = -1
 		} else if dice >= 2 && dice <= 5 {
@@ -213,7 +214,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 			dy = 1
 		}
 
-		roll(&dice, 10)
+		roll(conf.rng, &dice, 10)
 		if dice >= 0 && dice <= 1 {
 			dx = 2
 		} else if dice >= 2 && dice <= 5 {
@@ -225,7 +226,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 		}
 
 	case Dying:
-		roll(&dice, 10)
+		roll(conf.rng, &dice, 10)
 		if dice >= 0 && dice <= 1 {
 			dy = -1
 		} else if dice >= 2 && dice <= 8 {
@@ -234,7 +235,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 			dy = 1
 		}
 
-		roll(&dice, 15)
+		roll(conf.rng, &dice, 15)
 		if dice >= 0 && dice <= 0 {
 			dx = -3
 		} else if dice >= 1 && dice <= 2 {
@@ -252,7 +253,7 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 		}
 
 	case Dead:
-		roll(&dice, 10)
+		roll(conf.rng, &dice, 10)
 		if dice >= 0 && dice <= 2 {
 			dy = -1
 		} else if dice >= 3 && dice <= 6 {
@@ -260,14 +261,14 @@ func setDeltas(t BranchType, conf *Config, life int, age int, multiplier int, re
 		} else if dice >= 7 && dice <= 9 {
 			dy = 1
 		}
-		dx = (rand.Int() % 3) - 1
+		dx = (conf.rng.Int() % 3) - 1
 	}
 	*returnDx = dx
 	*returnDy = dy
 }
 
-func roll(dice *int, mod int) {
-	*dice = rand.Int() % mod
+func roll(rng *rand.Rand, dice *int, mod int) {
+	*dice = rng.Int() % mod
 }
 
 type Config struct {
@@ -280,6 +281,7 @@ type Config struct {
 	max_y      int
 	leaves     []string
 	leavesSize int
+	rng        *rand.Rand
 }
 
 type Counters struct {
