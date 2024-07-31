@@ -272,11 +272,11 @@ type Config struct {
 	rng        *rand.Rand
 }
 
-func NewConfig(w, h int, seed int64) Config {
+func NewConfig(w, h int, seed int64, life int) Config {
 	return Config{
 		live:       0,
 		infinite:   0,
-		lifeStart:  100,
+		lifeStart:  life,
 		seed:       int64(seed),
 		max_x:      w,
 		max_y:      h,
