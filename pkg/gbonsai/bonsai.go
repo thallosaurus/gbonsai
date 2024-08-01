@@ -2,26 +2,25 @@ package gbonsai
 
 import (
 	"math/rand"
-	"slices"
 )
 
-func Run(conf Config) (*TwoDimStringBuf, *TwoDimStringBuf) {
+func Run(conf Config) (*GrowingVector, *GrowingVector) {
 	//TODO improve precision
 
 	//conf := NewConfig()
 
 	counters := Counters{}
 
-	treebuf := NewTwoDimStringBuf(conf.max_x, conf.max_y)
-	//treebuf := NewGrowingVector(conf.max_x, conf.max_y)
-	basebuf := NewTwoDimStringBuf(conf.max_x, conf.max_y)
+	//treebuf := NewTwoDimStringBuf(conf.max_x, conf.max_y)
+	treebuf := NewGrowingVector(conf.max_x, conf.max_y)
+	basebuf := NewGrowingVector(conf.max_x, conf.max_y)
 	obj := NCObjects{
 		//treeBuf: &treebuf,
 		treeBuf: &treebuf,
 		baseBuf: &basebuf,
 	}
 
-	conf.leaves = slices.Insert(conf.leaves, 0, "&")
+	//conf.leaves = slices.Insert(conf.leaves, 0, "&")
 
 	InitColors()
 	//obj.treeBuf.Wattron(Pair(8))
@@ -104,10 +103,10 @@ func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, 
 		branchStr := chooseString(conf, t, life, dx, dy)
 
 		// print
-		objects.treeBuf.Mvwprintw(x, y, &CharCell{
-			c:     []byte(branchStr),
-			color: col,
-		})
+		objects.treeBuf.Mvwprintw(x, y,
+			branchStr,
+			col,
+		)
 
 	}
 }
@@ -351,7 +350,7 @@ func NewConfig(w, h int, seed int64, life int) Config {
 		seed:      int64(seed),
 		max_x:     w,
 		max_y:     h,
-		leaves:    []string{"&", "*", "%", "#"},
+		leaves:    []string{"*", "&", "%"},
 
 		multiplier: 5,
 		rng:        rand.New(rand.NewSource(int64(seed))),
@@ -365,8 +364,8 @@ type Counters struct {
 }
 
 type NCObjects struct {
-	baseBuf *TwoDimStringBuf
-	treeBuf *TwoDimStringBuf
+	baseBuf *GrowingVector
+	treeBuf *GrowingVector
 }
 
 type BranchType = int

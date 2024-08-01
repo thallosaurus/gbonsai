@@ -41,7 +41,7 @@ func InitColors() {
 		pairs = append(pairs, p)
 	}
 
-	fmt.Println(pairs)
+	//fmt.Println(pairs)
 
 	/*init_pair(8, 7, bg) // gray will look white
 	init_pair(9, 1, bg)

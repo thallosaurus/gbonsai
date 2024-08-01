@@ -29,8 +29,8 @@ type GrowingVector struct {
 	locked   bool
 }
 
-func (g *GrowingVector) Mvwprintw(x, y int, c *CharCell) {
-	g.Set(x, y, c)
+func (g *GrowingVector) Mvwprintw(x, y int, s string, color Color) {
+	g.SetString(x, y, s, color)
 }
 func (g *GrowingVector) Set(x, y int, c *CharCell) {
 	if x < g.width && y < g.height {
@@ -42,13 +42,10 @@ func (g *GrowingVector) SetIndex(index int, c *CharCell) {
 	g.chardata[index] = c
 }
 func (g *GrowingVector) SetString(x, y int, s string, color Color) {
-	for i, v := range strings.Split(s, "") {
-
-		g.Set(x+i, y, &CharCell{
-			c:     []byte(v),
+	for pos, char := range s {
+		g.Set(x+pos, y, &CharCell{
+			c:     []byte(string(char)),
 			color: color,
-			//x:     x + i,
-			//y:     y,
 		})
 	}
 }
@@ -75,55 +72,72 @@ func (g *GrowingVector) String() string {
 	return w.String()
 }
 
-func (g *GrowingVector) isRowEmpty(y int) bool {
-	return true
-}
-
 func (g *GrowingVector) HtmlString() string {
-	buf := make([]byte, g.width*g.height)
+	buf := make([]byte, 0)
 	w := bytes.NewBuffer(buf)
 
-	for y := range g.height {
+	s := g.String()
 
-		// if line is only spaces skip it
+	in_space := false
 
-		//if rr :=
+	x := 0
+	y := -1
 
-		rowbuf := make([]byte, g.width)
-		wb := bytes.NewBuffer(rowbuf)
+	leaf_counter := 0
 
-		open_span := false
-
-		for x := range g.width {
-			index := xy_to_index(g.width, x, y)
-			v := g.chardata[index]
-
-			if open_span {
-				wb.WriteString("&nbsp;")
-
-				if x+1 == g.width || g.chardata[x+1] != nil {
-					open_span = false
-					wb.WriteString("</span>")
-				}
-			} else {
-
-				if v != nil {
-					html := fmt.Sprintf("<span style=\"background-color: black; color: %s;\">%s</span>", DecodeColorHtml(v.color), string(v.c))
-					wb.WriteString(html)
-				} else {
-					open_span = true
-					wb.WriteString("<span>")
-					// nothing
-					wb.WriteString("&nbsp;")
-					//</span>")
-
-				}
-			}
-
+	var split_buf []string
+	sd := strings.Split(s, "\n")
+	for _, v := range sd {
+		if len(strings.TrimSpace(v)) == 0 {
+			y++
+			continue
 		}
 
-		w.WriteString(wb.String())
-		w.WriteString("<br>")
+		split_buf = append(split_buf, v)
+	}
+
+	for _, char := range strings.Join(split_buf, "\n") {
+
+		switch string(char) {
+		case " ":
+			if !in_space {
+				w.WriteString("<span>")
+			}
+			in_space = true
+			w.WriteString("&nbsp;")
+			x++
+
+		case "\n":
+			if in_space {
+				w.WriteString("</span>")
+				leaf_counter = 0
+			}
+			in_space = false
+			w.WriteString("<br>")
+			y++
+			x = 0
+
+		default:
+			if in_space {
+				w.WriteString("</span>")
+			}
+			in_space = false
+			cell := g.Get(x, y)
+
+			leaf_counter++
+
+			if cell != nil {
+				html := fmt.Sprintf("<span style=\"background-color: black; color: %s;\">%s</span>", DecodeColorHtml(cell.color), string(char))
+				w.WriteString(html)
+			} else {
+
+				html := fmt.Sprintf("<span style=\"background-color: black; color: white;\">%s</span>", string(char))
+				w.WriteString(html)
+			}
+
+			x++
+		}
+
 	}
 
 	return w.String()

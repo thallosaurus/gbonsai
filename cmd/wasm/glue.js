@@ -35,8 +35,10 @@ const initWasm = async () => {
 
 window.onload = (e) => {
   initWasm().then(mod => {
-    mod.instance.exports.gbonsai_dom(BigInt(Date.now()))
     console.log(mod)
-    //mod.instance.exports.animate_generation("tree", BigInt(1), 150)
+    //mod.instance.exports.generation()
+
+    let seed = BigInt(Date.now())
+    mod.instance.exports.gbonsai_dom(seed, 100)
   })
 }
