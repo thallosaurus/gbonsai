@@ -17,10 +17,10 @@ func write_to_document(seed int64) {
 
 	conf := gbonsai.NewConfig(200, 100, seed, 100)
 	//bonsai, _ := gbonsai.Run(conf)
-	bonsai, pot := gbonsai.Run(conf)
+	bonsai, _ := gbonsai.Run(conf)
 
-	js.Global().Get("document").Call("getElementById", "tree").Set("innerText", bonsai)
-	js.Global().Get("document").Call("getElementById", "pot").Set("innerText", pot)
+	js.Global().Get("document").Call("getElementById", "tree").Set("innerHTML", bonsai.HtmlString())
+	//js.Global().Get("document").Call("getElementById", "pot").Set("innerHTML", pot.HtmlString())
 }
 
 //export animate_generation
@@ -31,6 +31,6 @@ func generation(elem string, seed int64, initLife int) {
 		conf := gbonsai.NewConfig(200, 100, seed, i)
 		//bonsai, _ := gbonsai.Run(conf)
 		bonsai, _ := gbonsai.Run(conf)
-		e.Set("innerText", bonsai)
+		e.Set("innerHTML", bonsai)
 	}
 }

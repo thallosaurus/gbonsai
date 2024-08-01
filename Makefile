@@ -7,4 +7,5 @@ gbonsai_out:
 	cp cmd/wasm/index.html build/index.html
 
 gbonsai_cli:
-	go build -o gbonsai cmd/cli/main.go
+	mkdir -p build
+	go build -o build/gbonsai cmd/cli/main.go

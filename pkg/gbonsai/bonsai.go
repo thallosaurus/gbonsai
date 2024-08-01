@@ -5,31 +5,46 @@ import (
 	"slices"
 )
 
-func Run(conf Config) (string, string) {
+func Run(conf Config) (*TwoDimStringBuf, *TwoDimStringBuf) {
 	//TODO improve precision
 
 	//conf := NewConfig()
 
 	counters := Counters{}
 
+	treebuf := NewTwoDimStringBuf(conf.max_x, conf.max_y)
+	//treebuf := NewGrowingVector(conf.max_x, conf.max_y)
+	basebuf := NewTwoDimStringBuf(conf.max_x, conf.max_y)
 	obj := NCObjects{
-		treeBuf: NewTwoDimStringBuf(conf.max_x, conf.max_y),
-		baseBuf: NewTwoDimStringBuf(conf.max_x, conf.max_y),
+		//treeBuf: &treebuf,
+		treeBuf: &treebuf,
+		baseBuf: &basebuf,
 	}
 
 	conf.leaves = slices.Insert(conf.leaves, 0, "&")
 
+	InitColors()
+	//obj.treeBuf.Wattron(Pair(8))
 	//for {
+	drawBase(&obj, 1)
 	growTree(&conf, &obj, &counters)
 
-	return obj.treeBuf.String(), obj.baseBuf.String()
+	return obj.treeBuf, obj.baseBuf
 	//}
 }
 
-func drawBase(buf TwoDimStringBuf, baseType int) {
+func drawBase(objects *NCObjects, baseType int) {
 	switch baseType {
 	case 1:
-		buf.Wprintw(":")
+		//objects.baseBuf.Wprintw(":")
+		//objects.baseBuf.Wprintw("___________")
+		//objects.baseBuf.Wprintw("./~~~\\.")
+		//objects.baseBuf.Wprintw("___________")
+		//objects.baseBuf.Wprintw(":\n")
+		//
+		//objects.baseBuf.Mvwprintw(0, 1, " \\                           / \n")
+		//objects.baseBuf.Mvwprintw(0, 2, "  \\_________________________/ \n")
+		//objects.baseBuf.Mvwprintw(0, 3, "  (_)                     (_)\n")
 	}
 }
 
@@ -84,12 +99,56 @@ func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, 
 		x += dx
 		y += dy
 
+		col := chooseColor(conf, t, objects)
+
 		branchStr := chooseString(conf, t, life, dx, dy)
 
 		// print
-		objects.treeBuf.Mvwprintw(x, y, branchStr)
+		objects.treeBuf.Mvwprintw(x, y, &CharCell{
+			c:     []byte(branchStr),
+			color: col,
+		})
 
 	}
+}
+
+func chooseColor(conf *Config, t BranchType, objects *NCObjects) int {
+	switch t {
+	case Trunk:
+		fallthrough
+	case ShootLeft:
+		fallthrough
+	case ShootRight:
+		if conf.rng.Int()%2 == 0 {
+			//objects.treeBuf.Wattron(11)
+			return 11
+		} else {
+			//objects.treeBuf.Wattron(3)
+			return 3
+		}
+
+	case Dying:
+		if conf.rng.Int()%10 == 0 {
+			// same color
+			//objects.treeBuf.Wattron(2)
+		} else {
+			//objects.treeBuf.Wattron(2)
+		}
+		return 2
+
+	case Dead:
+		if conf.rng.Int()%3 == 0 {
+			//dark brown
+			//objects.treeBuf.Wattron(10)
+		} else {
+			//objects.treeBuf.Wattron(10)
+		}
+		return 10
+	}
+
+	return 1
+
+	//fmt.Printf("%v\n", objects.treeBuf.last_color)
 }
 
 func chooseString(conf *Config, t BranchType, life int, dx int, dy int) string {
@@ -138,7 +197,7 @@ func chooseString(conf *Config, t BranchType, life int, dx int, dy int) string {
 	case Dying:
 		fallthrough
 	case Dead:
-		branchStr = "&" //conf.leaves[conf.rng.Int()%len(conf.leaves)]
+		branchStr = conf.leaves[conf.rng.Int()%len(conf.leaves)]
 	}
 
 	return branchStr
@@ -292,7 +351,7 @@ func NewConfig(w, h int, seed int64, life int) Config {
 		seed:      int64(seed),
 		max_x:     w,
 		max_y:     h,
-		leaves:    make([]string, 64),
+		leaves:    []string{"&", "*", "%", "#"},
 
 		multiplier: 5,
 		rng:        rand.New(rand.NewSource(int64(seed))),
@@ -306,8 +365,8 @@ type Counters struct {
 }
 
 type NCObjects struct {
-	baseBuf TwoDimStringBuf
-	treeBuf TwoDimStringBuf
+	baseBuf *TwoDimStringBuf
+	treeBuf *TwoDimStringBuf
 }
 
 type BranchType = int
