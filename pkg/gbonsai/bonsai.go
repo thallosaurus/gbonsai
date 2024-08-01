@@ -13,7 +13,7 @@ func Run(conf Config) (*GrowingVector, *GrowingVector) {
 
 	//treebuf := NewTwoDimStringBuf(conf.max_x, conf.max_y)
 	treebuf := NewGrowingVector(conf.max_x, conf.max_y)
-	basebuf := NewGrowingVector(conf.max_x, conf.max_y)
+	basebuf := NewGrowingVector(31, 4)
 	obj := NCObjects{
 		//treeBuf: &treebuf,
 		treeBuf: &treebuf,
@@ -33,17 +33,23 @@ func Run(conf Config) (*GrowingVector, *GrowingVector) {
 }
 
 func drawBase(objects *NCObjects, baseType int) {
+	//int baseOriginY = (rows - baseHeight);
+	//int baseOriginX = (cols / 2) - (baseWidth / 2);
+	baseOriginX := (objects.baseBuf.width / 2) - 15
+
+	objects.baseBuf.Movptr(baseOriginX, 0)
+
 	switch baseType {
 	case 1:
-		//objects.baseBuf.Wprintw(":")
-		//objects.baseBuf.Wprintw("___________")
-		//objects.baseBuf.Wprintw("./~~~\\.")
-		//objects.baseBuf.Wprintw("___________")
-		//objects.baseBuf.Wprintw(":\n")
-		//
-		//objects.baseBuf.Mvwprintw(0, 1, " \\                           / \n")
-		//objects.baseBuf.Mvwprintw(0, 2, "  \\_________________________/ \n")
-		//objects.baseBuf.Mvwprintw(0, 3, "  (_)                     (_)\n")
+		objects.baseBuf.Wprintw(":", 8)
+		objects.baseBuf.Wprintw("___________", 2)
+		objects.baseBuf.Wprintw("./~~~\\.", 11)
+		objects.baseBuf.Wprintw("___________", 2)
+		objects.baseBuf.Wprintw(":\n", 8)
+
+		objects.baseBuf.Mvwprintw(baseOriginX, 1, " \\                           / \n", White)
+		objects.baseBuf.Mvwprintw(baseOriginX, 2, "  \\_________________________/ \n", White)
+		objects.baseBuf.Mvwprintw(baseOriginX, 3, "  (_)                     (_)\n", White)
 	}
 }
 

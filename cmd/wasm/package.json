@@ -1,0 +1,7 @@
+{
+  "name": "wasmbonsai",
+  "version": "0.0.1",
+  "main": "module.js",
+  "license": "MIT",
+  "type": "module"
+}

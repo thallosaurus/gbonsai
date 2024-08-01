@@ -19,6 +19,8 @@ func NewGrowingVector(width, height int) GrowingVector {
 		width:    width,
 		height:   height,
 		locked:   locked,
+		x:        0,
+		y:        0,
 	}
 }
 
@@ -27,6 +29,9 @@ type GrowingVector struct {
 	width    int
 	height   int
 	locked   bool
+
+	x int
+	y int
 }
 
 func (g *GrowingVector) Mvwprintw(x, y int, s string, color Color) {
@@ -55,7 +60,7 @@ func (g *GrowingVector) Get(x, y int) *CharCell {
 	return g.chardata[index]
 }
 func (g *GrowingVector) String() string {
-	buf := make([]byte, g.width*g.height)
+	buf := make([]byte, 0)
 	w := bytes.NewBuffer(buf)
 
 	for y := range g.height {
@@ -86,15 +91,20 @@ func (g *GrowingVector) HtmlString() string {
 	leaf_counter := 0
 
 	var split_buf []string
-	sd := strings.Split(s, "\n")
-	for _, v := range sd {
-		if len(strings.TrimSpace(v)) == 0 {
-			y++
-			continue
-		}
+	{
 
-		split_buf = append(split_buf, v)
+		sd := strings.Split(s, "\n")
+		for _, v := range sd {
+			if len(strings.TrimSpace(v)) == 0 {
+				y++
+				continue
+			}
+
+			split_buf = append(split_buf, v)
+		}
 	}
+
+	fmt.Println(g)
 
 	for _, char := range strings.Join(split_buf, "\n") {
 
@@ -127,7 +137,7 @@ func (g *GrowingVector) HtmlString() string {
 			leaf_counter++
 
 			if cell != nil {
-				html := fmt.Sprintf("<span style=\"background-color: black; color: %s;\">%s</span>", DecodeColorHtml(cell.color), string(char))
+				html := fmt.Sprintf("<span class=\"color-%d\">%s</span>", cell.color, string(char))
 				w.WriteString(html)
 			} else {
 
@@ -141,4 +151,14 @@ func (g *GrowingVector) HtmlString() string {
 	}
 
 	return w.String()
+}
+
+func (g *GrowingVector) Movptr(x, y int) {
+	g.x = x
+	g.y = y
+}
+
+func (g *GrowingVector) Wprintw(s string, c Color) {
+	g.SetString(g.x, g.y, s, c)
+	g.x += len(s)
 }

@@ -1,24 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bonsai</title>
     <script src="wasm_exec.js"></script>
-    <script type="module" src="glue.js"></script>
+    <script type="module" src="module.js"></script>
+    <script type="module">
+        import { initWasm } from './module.js'
+        window.onload = (e) => {
+            initWasm().then(mod => {
+            console.log(mod)
+    //mod.instance.exports.generation()
+
+            let seed = BigInt(Date.now())
+            mod.instance.exports.gbonsai_dom(seed, 100)
+        })
+    }
+    </script>
+    <link rel="stylesheet" href="main.css">
 
     <style>
         * {
             margin: 0;
             background-color: black;
+            font-family: BigBlueTerminal;
+        }
+
+        @font-face {
+            font-family: BigBlueTerminal;
+            src: url(bbt.ttf);
         }
     </style>
 
 </head>
+
 <body>
     <div style="font-family: monospace; text-align: center;">
         <div id="tree"></div>
-        <pre id="pot"></pre>
+        <pre id="pot" style="color: white"></pre>
     </div>
 </body>
+
 </html>

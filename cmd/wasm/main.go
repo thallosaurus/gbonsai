@@ -26,24 +26,25 @@ func get_as_string(seed int, life int) string {
 func write_to_document(seed int64, life int) {
 	fmt.Println("Called go code from js")
 
-	conf := gbonsai.NewConfig(200, 100, seed, life)
-	//bonsai, _ := gbonsai.Run(conf)
-	bonsai, _ := gbonsai.Run(conf)
+	conf := gbonsai.NewConfig(150, 100, seed, life)
+	bonsai, pot := gbonsai.Run(conf)
 
 	js.Global().Get("document").Call("getElementById", "tree").Set("innerHTML", bonsai.HtmlString())
-	//js.Global().Get("document").Call("getElementById", "pot").Set("innerHTML", pot.HtmlString())
+	js.Global().Get("document").Call("getElementById", "pot").Set("innerHTML", pot.String())
 }
 
 //export generation
 func generation() {
-	e := js.Global().Get("document").Call("getElementById", "tree")
-	fmt.Println(e)
+	b := js.Global().Get("document").Call("getElementById", "tree")
+	p := js.Global().Get("document").Call("getElementById", "pot")
+	fmt.Println(b)
 
 	for i := range 200 {
 		conf := gbonsai.NewConfig(200, 100, rand.Int63(), i)
 		//bonsai, _ := gbonsai.Run(conf)
-		bonsai, _ := gbonsai.Run(conf)
-		e.Set("innerHTML", bonsai.HtmlString())
+		bonsai, pot := gbonsai.Run(conf)
+		b.Set("innerHTML", bonsai.HtmlString())
+		p.Set("innerHTML", pot.HtmlString())
 		time.Sleep(300)
 	}
 }
