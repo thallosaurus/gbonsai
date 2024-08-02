@@ -3,232 +3,164 @@ package gbonsai
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"strings"
 )
 
-type StrBuf = map[int][]byte
-
-type BufAttr = []int
-
-type TwoDimStringBuf struct {
-	width  int
-	height int
-	vec    StrBuf
-	attrs  BufAttr
-
-	last_color       ColorPair
-	last_color_index int
+type CharCell struct {
+	c     []byte
+	color Color
 }
 
-func NewTwoDimStringBuf(w, h int) TwoDimStringBuf {
-	col := ColorPair{bg: White, fg: 4}
-	// Allocate memory for the row buffers
-	vc := make(StrBuf, h)
-	//attrs := make(BufAttr)
-	var attrs BufAttr
-	// Initialize children for each row
-	for i := range h {
-		s_buf := make([]byte, w)
-		for j := range s_buf {
-			s_buf[j] = []byte(" ")[0]
-			attrs = append(attrs, 4)
-		}
-		vc[i] = s_buf
-	}
-
-	return TwoDimStringBuf{
-		width:      w,
-		height:     h,
-		vec:        vc,
-		attrs:      attrs,
-		last_color: col,
+func NewGrowingVector(width, height int) GrowingVector {
+	locked := false
+	chardata := make(map[int]*CharCell)
+	return GrowingVector{
+		chardata: chardata,
+		width:    width,
+		height:   height,
+		locked:   locked,
+		x:        0,
+		y:        0,
 	}
 }
 
-func (t TwoDimStringBuf) String() string {
-	buf := make([]byte, t.width*t.height)
+type GrowingVector struct {
+	chardata map[int]*CharCell
+	width    int
+	height   int
+	locked   bool
+
+	x int
+	y int
+}
+
+func (g *GrowingVector) Mvwprintw(x, y int, s string, color Color) {
+	g.SetString(x, y, s, color)
+}
+func (g *GrowingVector) Set(x, y int, c *CharCell) {
+	if x < g.width && y < g.height {
+		index := xy_to_index(g.width, x, y)
+		g.SetIndex(index, c)
+	}
+}
+func (g *GrowingVector) SetIndex(index int, c *CharCell) {
+	g.chardata[index] = c
+}
+func (g *GrowingVector) SetString(x, y int, s string, color Color) {
+	for pos, char := range s {
+		g.Set(x+pos, y, &CharCell{
+			c:     []byte(string(char)),
+			color: color,
+		})
+	}
+}
+
+func (g *GrowingVector) Get(x, y int) *CharCell {
+	index := xy_to_index(g.width, x, y)
+	return g.chardata[index]
+}
+func (g *GrowingVector) String() string {
+	buf := make([]byte, 0)
 	w := bytes.NewBuffer(buf)
 
-	for i := range t.height {
-		if ts := strings.TrimSpace(string(t.vec[i])); len(ts) > 0 {
-			w.WriteString(fmt.Sprintf("%s\n", string(t.vec[i])))
+	for y := range g.height {
+		for x := range g.width {
+			if d := g.Get(x, y); d != nil {
+				w.Write(d.c)
+			} else {
+				w.Write([]byte(" "))
+			}
 		}
+		w.Write([]byte("\n"))
 	}
+
 	return w.String()
 }
 
-func (t *TwoDimStringBuf) HtmlString() string {
-	buf := make([]byte, t.width*t.height)
+func (g *GrowingVector) HtmlString() string {
+	buf := make([]byte, 0)
 	w := bytes.NewBuffer(buf)
 
-	anal := analyseBuffer(t)
-	fmt.Printf("%+v\n", anal)
+	s := g.String()
 
 	in_space := false
 
-	for y := range t.height {
+	x := 0
+	y := -1
 
-		leaf_count := 0
+	leaf_counter := 0
 
-		row := strings.Split(string(t.vec[y]), "")
-		for x := range len(row) {
+	var split_buf []string
+	{
+
+		sd := strings.Split(s, "\n")
+		for _, v := range sd {
+			if len(strings.TrimSpace(v)) == 0 {
+				y++
+				continue
+			}
+
+			split_buf = append(split_buf, v)
+		}
+	}
+
+	for _, char := range strings.Join(split_buf, "\n") {
+
+		switch string(char) {
+		case " ":
+			if !in_space {
+				w.WriteString("<span>")
+			}
+			in_space = true
+			w.WriteString("&nbsp;")
+			x++
+
+		case "\n":
 			if in_space {
-				w.WriteString("&nbsp;")
-				//</span>")
+				w.WriteString("</span>")
+				leaf_counter = 0
+			}
+			in_space = false
+			w.WriteString("<br>")
+			y++
+			x = 0
 
-				if x+1 == t.width || string(row[x+1]) != " " {
-					in_space = false
-					w.WriteString("</span>")
-				}
+		default:
+			if in_space {
+				w.WriteString("</span>")
+			}
+			in_space = false
+			cell := g.Get(x, y)
 
+			leaf_counter++
+
+			if cell != nil {
+				html := fmt.Sprintf("<span class=\"color-%d\">%s</span>", cell.color, string(char))
+				w.WriteString(html)
 			} else {
 
-				if row[x] == " " {
-					in_space = true
-					w.WriteString("<span>&nbsp;")
-				} else {
-					index := xy_to_index(t.width, x, y)
-					color := t.attrs[index]
-
-					html := fmt.Sprintf("<span style=\"background-color: black; color: %s;\">%s</span>", DecodeColorHtml(color), string(row[x]))
-					//w.WriteString(fmt.Sprintf(, string(t.vec[i])))
-					w.WriteString(html)
-					leaf_count++
-				}
+				html := fmt.Sprintf("<span style=\"background-color: black; color: white;\">%s</span>", string(char))
+				w.WriteString(html)
 			}
+
+			x++
 		}
-		w.WriteString("<br>")
+
 	}
 
 	return w.String()
 }
 
-func (t *TwoDimStringBuf) Wattron(colorIndex int) {
-	t.last_color_index = colorIndex
+func (g *GrowingVector) Movptr(x, y int) {
+	g.x = x
+	g.y = y
 }
 
-func (t *TwoDimStringBuf) Mvwprintw(x, y int, s *CharCell) {
-	if y < t.height {
-		//row := []byte(t.vec[y])
-		st := s.c
-
-		for i, v := range st {
-			if x+i < len(t.vec[y]) && x+i > 0 {
-				t.vec[y][x+i] = v
-
-				//col := t.last_color_index
-				xyindex := xy_to_index(t.width, x+i, y)
-				t.attrs[xyindex] = s.color
-			}
-		}
-	}
-
-}
-
-func (t TwoDimStringBuf) Wprintw(s string) {
-
+func (g *GrowingVector) Wprintw(s string, c Color) {
+	g.SetString(g.x, g.y, s, c)
+	g.x += len(s)
 }
 
 func xy_to_index(w, x, y int) int {
 	return y*w + x
-}
-
-type AnalysisResult struct {
-	left   int
-	right  int
-	top    int
-	bottom int
-}
-
-func analyseBuffer(buf *TwoDimStringBuf) AnalysisResult {
-	left := 1
-	right := buf.width
-	top := 1
-	bottom := buf.height
-
-	//tree_started := false
-
-	for y := range len(buf.vec) {
-
-		row_s := string(buf.vec[y])
-		row := strings.Split(row_s, "")
-
-		left_whitespace := len(row)
-		right_whitespace := 0
-
-		for x := range len(row) {
-			//count whitespace
-			v := row[x]
-			if v != " " {
-				left_whitespace = x
-				fmt.Printf("%d\n", x)
-				break
-			}
-
-		}
-
-		fmt.Printf("left: %d, right: %d\n", left_whitespace, right_whitespace)
-
-		left = max(left_whitespace, left)
-		//right = max(right, right_whitespace)
-
-		//		c_left := countWhitespaceArray(row)
-		/*fmt.Printf("row: %s", row)
-
-		if left < c_left && !tree_started {
-			//top =
-			//left = c_left
-			tree_started = true
-		}
-
-		if left > c_left && tree_started {
-
-		}*/
-
-		//for _ = range len(row) {
-
-		// find left side
-		//left = (left,countWhitespaceArray(row, false))
-		/*if row[x] != " " && !left_found {
-			left = x
-			left_found = true
-			//space
-		} else {
-		}*/
-		//}
-	}
-
-	fmt.Printf("\n")
-
-	return AnalysisResult{
-		left, right, top, bottom,
-	}
-}
-
-func countWhitespaceArray(a []string) int {
-	for i, v := range a {
-		log.Printf("log %s", v)
-		if v != " " {
-			return i
-		}
-	}
-
-	return 187
-}
-
-func max(a int, b int) int {
-	if a > b {
-		return a
-	} else {
-		return b
-	}
-}
-
-func min(a int, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
 }

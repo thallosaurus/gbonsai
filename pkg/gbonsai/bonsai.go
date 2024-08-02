@@ -7,11 +7,8 @@ import (
 func Run(conf Config) (*GrowingVector, *GrowingVector) {
 	//TODO improve precision
 
-	//conf := NewConfig()
-
 	counters := Counters{}
 
-	//treebuf := NewTwoDimStringBuf(conf.max_x, conf.max_y)
 	treebuf := NewGrowingVector(conf.max_x, conf.max_y)
 	basebuf := NewGrowingVector(31, 4)
 	obj := NCObjects{
@@ -20,21 +17,14 @@ func Run(conf Config) (*GrowingVector, *GrowingVector) {
 		baseBuf: &basebuf,
 	}
 
-	//conf.leaves = slices.Insert(conf.leaves, 0, "&")
-
 	InitColors()
-	//obj.treeBuf.Wattron(Pair(8))
-	//for {
 	drawBase(&obj, 1)
 	growTree(&conf, &obj, &counters)
 
 	return obj.treeBuf, obj.baseBuf
-	//}
 }
 
 func drawBase(objects *NCObjects, baseType int) {
-	//int baseOriginY = (rows - baseHeight);
-	//int baseOriginX = (cols / 2) - (baseWidth / 2);
 	baseOriginX := (objects.baseBuf.width / 2) - 15
 
 	objects.baseBuf.Movptr(baseOriginX, 0)
