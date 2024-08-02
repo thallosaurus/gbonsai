@@ -94,7 +94,7 @@ func (g *GrowingVector) HtmlString() string {
 	leaf_counter := 0
 
 	last_left_offset := g.width
-	last_right_offset := 0
+	last_right_offset := g.width
 
 	var split_buf []string
 	{
@@ -115,20 +115,26 @@ func (g *GrowingVector) HtmlString() string {
 				last_left_offset = left_offset
 			}
 			//if right offset is bigger than last one, set last one to offset
-			if right_offset > last_right_offset {
+			if right_offset < last_right_offset {
 				last_right_offset = right_offset
 			}
+
+			fmt.Printf("%d, %d: %s\n", last_left_offset, last_right_offset, v)
 
 			split_buf = append(split_buf, v)
 		}
 	}
 
+	x = last_left_offset
+
 	fmt.Printf("Left Offset: %d, Right Offset: %d\n", last_left_offset, last_right_offset)
 
-	/*for i, s := range split_buf {
-		split_buf[i] = s[last_left_offset : last_left_offset+last_right_offset]
-		fmt.Println(split_buf[i])
-	}*/
+	for i, s := range split_buf {
+		split_buf[i] = s[last_left_offset : g.width-last_right_offset]
+		//fmt.Println(split_buf[i])
+	}
+
+	w.WriteString("<p class='row'>")
 
 	for _, char := range strings.Join(split_buf, "\n") {
 
@@ -147,9 +153,9 @@ func (g *GrowingVector) HtmlString() string {
 				leaf_counter = 0
 			}
 			in_space = false
-			w.WriteString("<br>")
+			w.WriteString("</p><br><p class='row'>")
 			y++
-			x = 0
+			x = last_left_offset
 
 		default:
 			if in_space {
@@ -173,6 +179,8 @@ func (g *GrowingVector) HtmlString() string {
 		}
 
 	}
+
+	w.WriteString("</p>")
 
 	return w.String()
 }

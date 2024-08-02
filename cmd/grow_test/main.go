@@ -1,10 +1,8 @@
 package main
 
-import "github.com/thallosaurus/gbonsai/pkg/gbonsai"
+import "fmt"
 
 func main() {
-	vec := gbonsai.NewGrowingVector(0, 0)
-
-	vec.SetString(0, 0, "Hello World", gbonsai.Black, nil)
-
+	i := "Hello World!"
+	fmt.Println(i[3 : len(i)-5])
 }

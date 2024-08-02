@@ -30,19 +30,24 @@
             })
             init()
         }
-    </script>
+        </script>
     <link rel="stylesheet" href="main.css">
-
+    
     <style>
         * {
             margin: 0;
+            white-space: nowrap;
+        }
+
+        body {
+            background-color: black;
+            color: white
         }
 
         #app {
             font-size: .5em;
-            background-color: black;
             font-family: BigBlueTerminal;
-
+            text-align: center;
         }
 
         @font-face {
@@ -50,9 +55,13 @@
             src: url(bbt.ttf);
         }
 
-        span {
-            display: inline-block;
+        .row {
+            display: inline;
+        }
 
+        pre {
+            white-space: pre-wrap;
+            display: inline-block;
         }
     </style>
 
@@ -61,11 +70,11 @@
 <body>
     <form id="settings">
         <input type="number" id="seed" value="1">
-        <input type="number" id="life" value="20">
+        <input type="number" id="life" value="100">
 
         <input type="submit">
     </form>
-    <div id="app" style="text-align: center;">
+    <div id="app">
         <div id="tree"></div>
         <pre id="pot" style="color: white"></pre>
     </div>

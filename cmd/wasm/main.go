@@ -30,7 +30,7 @@ func gbonsai_dom(seed int64, life int) {
 	bonsai, pot := gbonsai.Run(conf)
 
 	js.Global().Get("document").Call("getElementById", "tree").Set("innerHTML", bonsai.HtmlString())
-	js.Global().Get("document").Call("getElementById", "pot").Set("innerHTML", pot.HtmlString())
+	js.Global().Get("document").Call("getElementById", "pot").Set("innerHTML", pot.String())
 }
 
 //export generation
