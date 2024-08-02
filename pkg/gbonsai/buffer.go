@@ -93,6 +93,9 @@ func (g *GrowingVector) HtmlString() string {
 
 	leaf_counter := 0
 
+	last_left_offset := g.width
+	last_right_offset := 0
+
 	var split_buf []string
 	{
 
@@ -103,9 +106,29 @@ func (g *GrowingVector) HtmlString() string {
 				continue
 			}
 
+			//get left and right offset
+			left_offset := count_whitespace(v, false)
+			right_offset := count_whitespace(v, true)
+
+			//if left offset is smaller than last one, set last one to offset
+			if left_offset < last_left_offset {
+				last_left_offset = left_offset
+			}
+			//if right offset is bigger than last one, set last one to offset
+			if right_offset > last_right_offset {
+				last_right_offset = right_offset
+			}
+
 			split_buf = append(split_buf, v)
 		}
 	}
+
+	fmt.Printf("Left Offset: %d, Right Offset: %d\n", last_left_offset, last_right_offset)
+
+	/*for i, s := range split_buf {
+		split_buf[i] = s[last_left_offset : last_left_offset+last_right_offset]
+		fmt.Println(split_buf[i])
+	}*/
 
 	for _, char := range strings.Join(split_buf, "\n") {
 
@@ -142,7 +165,6 @@ func (g *GrowingVector) HtmlString() string {
 				html := fmt.Sprintf("<span style=\"animation-delay: -%dms; \"class=\"color-%d type-%d\">%s</span>", delay, cell.color, *cell.t, string(char))
 				w.WriteString(html)
 			} else {
-
 				html := fmt.Sprintf("<span style=\"background-color: black; color: white;\">%s</span>", string(char))
 				w.WriteString(html)
 			}
@@ -167,4 +189,35 @@ func (g *GrowingVector) Wprintw(s string, c Color) {
 
 func xy_to_index(w, x, y int) int {
 	return y*w + x
+}
+
+func count_whitespace(s string, right bool) int {
+	c := 0
+
+	if right {
+		s = reverse(s)
+	}
+
+	for i, v := range s {
+		if string(v) != " " {
+			break
+		}
+
+		c = i
+	}
+
+	return c
+}
+
+func reverse(s string) string {
+	rns := []rune(s) // convert to rune
+	for i, j := 0, len(rns)-1; i < j; i, j = i+1, j-1 {
+
+		// swap the letters of the string,
+		// like first with last and so on.
+		rns[i], rns[j] = rns[j], rns[i]
+	}
+
+	// return the reversed string.
+	return string(rns)
 }

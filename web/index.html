@@ -8,26 +8,41 @@
     <script src="wasm_exec.js"></script>
     <script type="module" src="module.js"></script>
     <script type="module">
-        import { initWasm } from './module.js'
-        window.onload = (e) => {
-            initWasm().then(mod => {
-            console.log(mod)
-    //mod.instance.exports.generation()
+        import {
+            initWasm
+        } from './module.js'
 
-            let seed = BigInt(Date.now())
-            let s = mod.instance.exports.gbonsai_dom(seed, 100)
-        })
-    }
+        let form;
+
+        async function init() {
+            const seed_input = form.querySelector("#seed")
+            const life_input = form.querySelector("#life")
+
+            const mod = await initWasm()
+            let s = mod.instance.exports.gbonsai_dom(seed_input.value, life_input.value)
+        }
+
+        window.onload = (e) => {
+            form = document.querySelector("#settings")
+            form.addEventListener("submit", e => {
+                e.preventDefault()
+                init()
+            })
+            init()
+        }
     </script>
     <link rel="stylesheet" href="main.css">
 
     <style>
         * {
             margin: 0;
-            font-family: monospace;
-            overflow:visible;
+        }
+
+        #app {
             font-size: .5em;
-            background-color: black
+            background-color: black;
+            font-family: BigBlueTerminal;
+
         }
 
         @font-face {
@@ -44,7 +59,13 @@
 </head>
 
 <body>
-    <div style="text-align: center;">
+    <form id="settings">
+        <input type="number" id="seed" value="1">
+        <input type="number" id="life" value="20">
+
+        <input type="submit">
+    </form>
+    <div id="app" style="text-align: center;">
         <div id="tree"></div>
         <pre id="pot" style="color: white"></pre>
     </div>
