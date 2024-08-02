@@ -17,12 +17,25 @@
         async function init() {
             const seed_input = form.querySelector("#seed")
             const life_input = form.querySelector("#life")
+            const random_seed = form.querySelector("#random_seed")
 
-            const mod = await initWasm()
-            //let s = mod.instance.exports.gbonsai_dom(seed_input.value, life_input.value)
-            let s = gbonsai(Number(seed_input.value), Number(life_input.value))
+            initWasm().then(mod => {
 
-            document.getElementById("app").innerHTML = s;
+                console.log(random_seed.checked)
+                
+                let seed;
+                if (random_seed.value == "on") {
+                    seed = Date.now()
+                } else {
+                    seed = Number(seed = seed_input.value)
+                }
+                //let s = mod.instance.exports.gbonsai_dom(seed_input.value, life_input.value)
+                let s = gbonsai(Number(seed), Number(life_input.value))
+                
+                document.getElementById("app").innerHTML = s;
+            }).catch(e => {
+                document.getElementById("app").innerHTML = "Could not load gbonsai.wasm";
+            })
         }
 
         window.onload = (e) => {
@@ -76,6 +89,8 @@
 
 <body>
     <form id="settings">
+        <label for="random_seed">Use random seed</label>
+        <input type="checkbox" id="random_seed" name="random_seed" disabled>
         <input type="number" id="seed" value="1">
         <input type="number" id="life" value="32">
 
