@@ -2,7 +2,6 @@ package gbonsai
 
 import (
 	"fmt"
-	"log"
 )
 
 type Color = int
@@ -51,67 +50,6 @@ func InitColors() {
 	init_pair(13, 5, bg)
 	init_pair(14, 6, bg)
 	init_pair(15, 7, bg)*/
-}
-
-func DecodeColorHtml(c Color) string {
-
-	switch c {
-	//	case Transparent:
-	//		return "transparent"
-
-	case Black:
-		return "black"
-
-	case Maroon:
-		return "#800000"
-
-	case Green:
-		return "#008000"
-
-	case Olive:
-		return "#808000"
-
-	case Navy:
-		return "#000080"
-
-	case Purple:
-		return "#800080"
-
-	case Teal:
-		return "#008080"
-
-	case Silver:
-		return "#c0c0c0"
-
-	case Grey:
-		return "#808080"
-
-	case Red:
-		return "#ff0000"
-
-	case Lime:
-		return "#00ff00"
-
-	case Yellow:
-		return "#ffff00"
-
-	case Blue:
-		return "#0000ff"
-
-	case Fuchsia:
-		return "#ff00ff"
-
-	case Aqua:
-		return "#00ffff"
-
-	case White:
-		return "#ffffff"
-
-	default:
-		log.Printf("Unknown Color: %d", c)
-		return "transparent"
-	}
-
 }
 
 const (

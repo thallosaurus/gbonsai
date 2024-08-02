@@ -26,11 +26,11 @@ func get_as_string(seed int, life int) string {
 func gbonsai_dom(seed int64, life int) {
 	fmt.Println("Called go code from js")
 
-	conf := gbonsai.NewConfig(150, 100, seed, life)
+	conf := gbonsai.NewConfig(175, 100, seed, life)
 	bonsai, pot := gbonsai.Run(conf)
 
 	js.Global().Get("document").Call("getElementById", "tree").Set("innerHTML", bonsai.HtmlString())
-	js.Global().Get("document").Call("getElementById", "pot").Set("innerHTML", pot.String())
+	js.Global().Get("document").Call("getElementById", "pot").Set("innerHTML", pot.HtmlString())
 }
 
 //export generation

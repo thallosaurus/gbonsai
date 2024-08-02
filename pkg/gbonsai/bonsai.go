@@ -25,9 +25,9 @@ func Run(conf Config) (*GrowingVector, *GrowingVector) {
 }
 
 func drawBase(objects *NCObjects, baseType int) {
-	baseOriginX := (objects.baseBuf.width / 2) - 15
+	//baseOriginX := (objects.baseBuf.width / 2) - 15
 
-	objects.baseBuf.Movptr(baseOriginX, 0)
+	//objects.baseBuf.Movptr(baseOriginX, 0)
 
 	switch baseType {
 	case 1:
@@ -37,9 +37,9 @@ func drawBase(objects *NCObjects, baseType int) {
 		objects.baseBuf.Wprintw("___________", 2)
 		objects.baseBuf.Wprintw(":\n", 8)
 
-		objects.baseBuf.Mvwprintw(baseOriginX, 1, " \\                           / \n", White)
-		objects.baseBuf.Mvwprintw(baseOriginX, 2, "  \\_________________________/ \n", White)
-		objects.baseBuf.Mvwprintw(baseOriginX, 3, "  (_)                     (_)\n", White)
+		objects.baseBuf.Mvwprintw(0, 1, " \\                           / \n", White)
+		objects.baseBuf.Mvwprintw(0, 2, "  \\_________________________/ \n", White)
+		objects.baseBuf.Mvwprintw(0, 3, "  (_)                     (_)\n", White)
 	}
 }
 
