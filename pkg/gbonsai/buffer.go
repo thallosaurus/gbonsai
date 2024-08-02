@@ -3,12 +3,14 @@ package gbonsai
 import (
 	"bytes"
 	"fmt"
+	"math/rand"
 	"strings"
 )
 
 type CharCell struct {
 	c     []byte
 	color Color
+	t     *int
 }
 
 func NewGrowingVector(width, height int) GrowingVector {
@@ -34,8 +36,8 @@ type GrowingVector struct {
 	y int
 }
 
-func (g *GrowingVector) Mvwprintw(x, y int, s string, color Color) {
-	g.SetString(x, y, s, color)
+func (g *GrowingVector) Mvwprintw(x, y int, s string, color Color, t *int) {
+	g.SetString(x, y, s, color, t)
 }
 func (g *GrowingVector) Set(x, y int, c *CharCell) {
 	if x < g.width && y < g.height {
@@ -46,11 +48,12 @@ func (g *GrowingVector) Set(x, y int, c *CharCell) {
 func (g *GrowingVector) SetIndex(index int, c *CharCell) {
 	g.chardata[index] = c
 }
-func (g *GrowingVector) SetString(x, y int, s string, color Color) {
+func (g *GrowingVector) SetString(x, y int, s string, color Color, t *int) {
 	for pos, char := range s {
 		g.Set(x+pos, y, &CharCell{
 			c:     []byte(string(char)),
 			color: color,
+			t:     t,
 		})
 	}
 }
@@ -134,8 +137,9 @@ func (g *GrowingVector) HtmlString() string {
 
 			leaf_counter++
 
-			if cell != nil {
-				html := fmt.Sprintf("<span class=\"color-%d\">%s</span>", cell.color, string(char))
+			if cell != nil && cell.t != nil {
+				delay := rand.Int() % 1000
+				html := fmt.Sprintf("<span style=\"animation-delay: -%dms; \"class=\"color-%d type-%d\">%s</span>", delay, cell.color, *cell.t, string(char))
 				w.WriteString(html)
 			} else {
 
@@ -157,7 +161,7 @@ func (g *GrowingVector) Movptr(x, y int) {
 }
 
 func (g *GrowingVector) Wprintw(s string, c Color) {
-	g.SetString(g.x, g.y, s, c)
+	g.SetString(g.x, g.y, s, c, nil)
 	g.x += len(s)
 }
 

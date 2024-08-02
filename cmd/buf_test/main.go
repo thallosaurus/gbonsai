@@ -7,18 +7,10 @@ import (
 )
 
 func main() {
-	buf := gbonsai.NewTwoDimStringBuf(100, 100)
+	buf := gbonsai.NewGrowingVector(10, 10)
 
-	buf.Mvwprintw(0, 0, "*")
-	/*
-		buf.Mvwprintw(0, 1, "*")
-		buf.Mvwprintw(0, 2, "*")
-		buf.Mvwprintw(0, 3, "*")
-		buf.Mvwprintw(0, 4, "*")
-		buf.Mvwprintw(1, 4, "*")
-		buf.Mvwprintw(2, 4, "*")
-		buf.Mvwprintw(3, 4, "*")
-		buf.Mvwprintw(4, 4, "*")*/
+	buf.Mvwprintw(0, 0, "*", gbonsai.White, nil)
 
 	fmt.Print(buf.String())
+	fmt.Print(buf.HtmlString())
 }

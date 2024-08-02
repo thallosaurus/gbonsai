@@ -24,22 +24,27 @@
     <style>
         * {
             margin: 0;
-            background-color: black;
-            font-family: BigBlueTerminal;
+            font-family: monospace;
             overflow:visible;
-            font-size: .5em
+            font-size: .5em;
+            background-color: black
         }
 
         @font-face {
             font-family: BigBlueTerminal;
             src: url(bbt.ttf);
         }
+
+        span {
+            display: inline-block;
+
+        }
     </style>
 
 </head>
 
 <body>
-    <div style="font-family: monospace; text-align: center;">
+    <div style="text-align: center;">
         <div id="tree"></div>
         <pre id="pot" style="color: white"></pre>
     </div>

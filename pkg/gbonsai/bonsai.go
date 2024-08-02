@@ -37,9 +37,9 @@ func drawBase(objects *NCObjects, baseType int) {
 		objects.baseBuf.Wprintw("___________", 2)
 		objects.baseBuf.Wprintw(":\n", 8)
 
-		objects.baseBuf.Mvwprintw(0, 1, " \\                           / \n", White)
-		objects.baseBuf.Mvwprintw(0, 2, "  \\_________________________/ \n", White)
-		objects.baseBuf.Mvwprintw(0, 3, "  (_)                     (_)\n", White)
+		objects.baseBuf.Mvwprintw(0, 1, " \\                           / \n", White, nil)
+		objects.baseBuf.Mvwprintw(0, 2, "  \\_________________________/ \n", White, nil)
+		objects.baseBuf.Mvwprintw(0, 3, "  (_)                     (_)\n", White, nil)
 	}
 }
 
@@ -102,6 +102,7 @@ func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, 
 		objects.treeBuf.Mvwprintw(x, y,
 			branchStr,
 			col,
+			&t,
 		)
 
 	}
