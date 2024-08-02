@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bonsai</title>
     <script src="wasm_exec.js"></script>
-    <script type="module" src="module.js"></script>
+    <script type="module" src="gbonsai.js"></script>
     <script type="module">
         import {
             initWasm
-        } from './module.js'
+        } from './gbonsai.js'
 
         let form;
 
@@ -19,7 +19,10 @@
             const life_input = form.querySelector("#life")
 
             const mod = await initWasm()
-            let s = mod.instance.exports.gbonsai_dom(seed_input.value, life_input.value)
+            //let s = mod.instance.exports.gbonsai_dom(seed_input.value, life_input.value)
+            let s = gbonsai(Number(seed_input.value), Number(life_input.value))
+
+            document.getElementById("app").innerHTML = s;
         }
 
         window.onload = (e) => {
@@ -79,8 +82,7 @@
         <input type="submit">
     </form>
     <div id="app">
-        <div id="tree"></div>
-        <pre id="pot" style="color: white"></pre>
+
     </div>
 </body>
 

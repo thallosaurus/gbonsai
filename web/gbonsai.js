@@ -27,18 +27,11 @@ const wasmBrowserInstantiate = async (wasmModuleUrl, importObject) => {
 };
 
 export const initWasm = async () => {
+  let url = new URL(import.meta.url)
+  let path = url.pathname.split("/").slice(0, -1).join("/")
+  console.log(url, path)
   const importObject = go.importObject;
-  const wasmModule = await wasmBrowserInstantiate("gbonsai.wasm", importObject);
+  const wasmModule = await wasmBrowserInstantiate(url.protocol + "//" + url.host + "/" + path + "/gbonsai.wasm", importObject);
   go.run(wasmModule.instance);
   return wasmModule
 };
-
-/*window.onload = (e) => {
-  initWasm().then(mod => {
-    console.log(mod)
-    //mod.instance.exports.generation()
-
-    let seed = BigInt(Date.now())
-    mod.instance.exports.gbonsai_dom(seed, 100)
-  })
-}*/

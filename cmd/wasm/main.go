@@ -11,7 +11,21 @@ import (
 	"github.com/thallosaurus/gbonsai/pkg/gbonsai"
 )
 
-func main() {}
+func main() {
+	js.Global().Set("gbonsai", js.FuncOf(gbonsai_func))
+	<-make(chan bool)
+}
+
+func gbonsai_func(this js.Value, args []js.Value) interface{} {
+	seed := args[0].Int()
+	life := args[1].Int()
+
+	conf := gbonsai.NewConfig(175, 100, int64(seed), life)
+	bonsai, pot := gbonsai.Run(conf)
+
+	s := fmt.Sprintf("<div id=\"tree\">%s</div><pre id=\"pot\" style=\"color: white\">%s</pre>", bonsai.HtmlString(), pot.String())
+	return s
+}
 
 //export gbonsai_string
 func get_as_string(seed int, life int) string {

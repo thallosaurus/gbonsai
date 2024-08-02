@@ -119,7 +119,7 @@ func (g *GrowingVector) HtmlString() string {
 				last_right_offset = right_offset
 			}
 
-			fmt.Printf("%d, %d: %s\n", last_left_offset, last_right_offset, v)
+			// fmt.Printf("%d, %d: %s\n", last_left_offset, last_right_offset, v)
 
 			split_buf = append(split_buf, v)
 		}

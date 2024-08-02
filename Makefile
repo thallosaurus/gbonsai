@@ -3,7 +3,7 @@ gbonsai_out:
 	mkdir -p build
 	tinygo build -o build/gbonsai.wasm -target wasm cmd/wasm/main.go
 	cp web/wasm_exec.js build/wasm_exec.js
-	cp web/module.js build/module.js
+	cp web/gbonsai.js build/gbonsai.js
 	cp web/bbt.ttf build/bbt.ttf
 	cp web/main.css build/main.css
 	cp web/index.html build/index.html
