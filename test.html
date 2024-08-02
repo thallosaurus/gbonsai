@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="web/wasm_exec.js"></script>
+    <script type="importmap">
+        {
+        "imports": {
+            "gbonsai": "https://thallosaurus.github.io/gbonsai/module.js"
+        }
+    }
+</script>
+
+    <script type="module">
+        import {
+            initWasm
+        } from 'gbonsai'
+        window.onload = (e) => {
+            initWasm().then(mod => {
+                console.log(mod)
+                //mod.instance.exports.generation()
+
+                let seed = BigInt(Date.now())
+                let s = mod.instance.exports.gbonsai_dom(seed, 100)
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <div style="font-family: monospace; text-align: center;">
+        <div id="tree"></div>
+        <pre id="pot" style="color: white"></pre>
+    </div>
+</body>
+
+</html>

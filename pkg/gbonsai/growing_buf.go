@@ -104,8 +104,6 @@ func (g *GrowingVector) HtmlString() string {
 		}
 	}
 
-	fmt.Println(g)
-
 	for _, char := range strings.Join(split_buf, "\n") {
 
 		switch string(char) {
