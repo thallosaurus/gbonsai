@@ -4,7 +4,7 @@ import (
 	"math/rand"
 )
 
-func Run(conf Config) (*GrowingVector, *GrowingVector) {
+func Run(conf Config, ret *chan string) (*GrowingVector, *GrowingVector) {
 	//TODO improve precision
 
 	counters := Counters{}
@@ -17,9 +17,11 @@ func Run(conf Config) (*GrowingVector, *GrowingVector) {
 		baseBuf: &basebuf,
 	}
 
+	treeCh := make(chan string)
+
 	InitColors()
 	drawBase(&obj, 1)
-	growTree(&conf, &obj, &counters)
+	growTree(&conf, &obj, &counters, &treeCh)
 
 	return obj.treeBuf, obj.baseBuf
 }
@@ -43,15 +45,15 @@ func drawBase(objects *NCObjects, baseType int) {
 	}
 }
 
-func growTree(conf *Config, objects *NCObjects, counters *Counters) {
+func growTree(conf *Config, objects *NCObjects, counters *Counters, ret *chan string) {
 	counters.shoots = 0
 	counters.branches = 0
 	counters.shootCounter = conf.rng.Int()
 
-	branch(conf, objects, counters, conf.max_x/2, conf.max_y-1, Trunk, conf.lifeStart)
+	branch(conf, objects, counters, conf.max_x/2, conf.max_y-1, Trunk, conf.lifeStart, ret)
 }
 
-func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, t BranchType, life int) {
+func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, t BranchType, life int, ret *chan string) {
 	counters.branches++
 	dx := 0
 	dy := 0
@@ -70,22 +72,22 @@ func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, 
 		}
 
 		if life < 3 {
-			branch(conf, objects, counters, x, y, Dead, life)
+			branch(conf, objects, counters, x, y, Dead, life, ret)
 		} else if t == Dying && life < (conf.multiplier+2) {
-			branch(conf, objects, counters, x, y, Dying, life)
+			branch(conf, objects, counters, x, y, Dying, life, ret)
 		} else if (t == ShootLeft || t == ShootRight) && life < (conf.multiplier+2) {
-			branch(conf, objects, counters, x, y, Dying, life)
+			branch(conf, objects, counters, x, y, Dying, life, ret)
 		} else if t == Trunk && (((conf.rng.Int() % 3) == 0) || life%conf.multiplier == 0) {
 			if conf.rng.Int()%8 == 0 && life > 7 {
 				shootCooldown = conf.multiplier * 2
-				branch(conf, objects, counters, x, y, Trunk, life+conf.rng.Int()%5-2)
+				branch(conf, objects, counters, x, y, Trunk, life+conf.rng.Int()%5-2, ret)
 			} else if shootCooldown <= 0 {
 				shootCooldown = conf.multiplier * 2
 				shootLife := life + conf.multiplier
 
 				counters.shoots += 1
 				counters.shootCounter += 1
-				branch(conf, objects, counters, x, y, counters.shootCounter%2+1, shootLife)
+				branch(conf, objects, counters, x, y, counters.shootCounter%2+1, shootLife, ret)
 			}
 		}
 
@@ -105,6 +107,9 @@ func branch(conf *Config, objects *NCObjects, counters *Counters, x int, y int, 
 			&t,
 		)
 
+		if ret != nil {
+			//*ret <- objects.treeBuf.HtmlString()
+		}
 	}
 }
 

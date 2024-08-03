@@ -1,5 +1,7 @@
-build/
+build.basic/
 cbonsai/
 *.wasm
 *.wat
 node_modules/
+web/vue/public/*.wasm
+web/vue/public/*.js

@@ -1,5 +1,5 @@
 {
-  "name": "cbonsai-gui",
+  "name": "gbonsai-gui",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.31"
+    "@types/golang-wasm-exec": "^1.15.2",
+    "vue": "^3.4.31",
+    "vue-router": "^4.4.2",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",

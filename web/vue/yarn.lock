@@ -233,6 +233,11 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.5.tgz#a6ce3e556e00fd9895dd872dd172ad0d4bd687f4"
   integrity sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==
 
+"@types/golang-wasm-exec@^1.15.2":
+  version "1.15.2"
+  resolved "https://registry.yarnpkg.com/@types/golang-wasm-exec/-/golang-wasm-exec-1.15.2.tgz#02adbbb208af391a1a0e2c55d1543e8657509a2d"
+  integrity sha512-NA77toY4yOiiV5foDVT/rfxmtoox7ASHqGs4Eek8xTMcKWwAhZLOD3SYfLQKq4P2jtOLQQkeISq3zSuQ1Y+apg==
+
 "@vitejs/plugin-vue@^5.0.5":
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-5.1.2.tgz#f11091e0130eca6c1ca8cfb85ee71ea53b255d31"
@@ -308,6 +313,11 @@
   dependencies:
     de-indent "^1.0.2"
     he "^1.2.0"
+
+"@vue/devtools-api@^6.0.0-beta.11", "@vue/devtools-api@^6.6.3":
+  version "6.6.3"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.6.3.tgz#b23a588154cba8986bba82b6e1d0248bde3fd1a0"
+  integrity sha512-0MiMsFma/HqA6g3KLKn+AGpL1kgKhFWszC9U29NfpWK5LE7bjeXxySWJrOJ77hBz+TBrBQ7o4QJqbPbqbs8rJw==
 
 "@vue/language-core@2.0.29":
   version "2.0.29"
@@ -541,6 +551,13 @@ vscode-uri@^3.0.8:
   resolved "https://registry.yarnpkg.com/vscode-uri/-/vscode-uri-3.0.8.tgz#1770938d3e72588659a172d0fd4642780083ff9f"
   integrity sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==
 
+vue-router@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.4.2.tgz#bc7bf27f108fc15e5cc2a30b314a662275e2b2bb"
+  integrity sha512-1qNybkn2L7QsLzaXs8nvlQmRKp8XF8DCxZys/Jr1JpQcHsKUxTKzTxCVA1G7NfBfwRIBgCJPoujOG5lHCCNUxw==
+  dependencies:
+    "@vue/devtools-api" "^6.6.3"
+
 vue-tsc@^2.0.24:
   version "2.0.29"
   resolved "https://registry.yarnpkg.com/vue-tsc/-/vue-tsc-2.0.29.tgz#bf7e9605af9fadec7fd6037d242217f5c6ad2c3b"
@@ -560,3 +577,10 @@ vue@^3.4.31:
     "@vue/runtime-dom" "3.4.35"
     "@vue/server-renderer" "3.4.35"
     "@vue/shared" "3.4.35"
+
+vuex@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/vuex/-/vuex-4.0.2.tgz#f896dbd5bf2a0e963f00c67e9b610de749ccacc9"
+  integrity sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q==
+  dependencies:
+    "@vue/devtools-api" "^6.0.0-beta.11"

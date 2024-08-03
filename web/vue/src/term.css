@@ -1,0 +1,10 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: BigBlueTerminal, monospace;
+}
+
+@font-face {
+    font-family: BigBlueTerminal;
+    src: url(bbt.ttf);
+}

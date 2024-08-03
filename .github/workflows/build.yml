@@ -18,12 +18,13 @@ jobs:
       - uses: acifani/setup-tinygo@v2
         with:
           tinygo-version: '0.32.0'
+      - uses: actions/setup-node@v4
 #      - name: Install dependencies
 #        run: go get .
 #      - name: Build Cli
 #        run: make gbonsai_cli
       - name: Build WASM
-        run: make gbonsai_out                
+        run: make gbonsai_vue              
 #      - name: Upload a Build Artifact
 #        uses: actions/upload-artifact@v4.3.4
                     
@@ -31,7 +32,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3.0.1
         with:
           name: wasm-pages
-          path: build
+          path: web/vue/dist
       - name: Deploy to GitHub Pages
         id: deployment
         #uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
