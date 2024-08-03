@@ -40,7 +40,7 @@ const wasmBrowserInstantiate = async (wasmModuleUrl: string, importObject: any) 
 
 export async function initWasm(): Promise<WebAssembly.WebAssemblyInstantiatedSource> {
     const importObject = go.importObject;
-    const wasmModule = await wasmBrowserInstantiate("./gbonsai.wasm", importObject);
+    const wasmModule = await wasmBrowserInstantiate("gbonsai/gbonsai.wasm", importObject);
     go.run(wasmModule.instance);
     return wasmModule
 };
