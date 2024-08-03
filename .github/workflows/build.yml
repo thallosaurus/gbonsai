@@ -24,7 +24,7 @@ jobs:
 #      - name: Build Cli
 #        run: make gbonsai_cli
       - name: Setup Yarn
-        run: cs web/vue/ && yarn
+        run: cd web/vue/ && yarn
       - name: Build WASM
         run: make gbonsai_vue         
 #      - name: Upload a Build Artifact
